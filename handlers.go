@@ -56,3 +56,38 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	Body := fmt.Sprintf("Total entries: %d\n", len(data))
 	fmt.Fprintf(w, "%s", Body)
 }
+
+func insertHandler(w http.ResponseWriter, r *http.Request) {
+	paramStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("Path: ", paramStr)
+
+	if len(paramStr) < 5 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Not enough arguments: "+r.URL.Path)
+		return
+	}
+
+	name := paramStr[2]
+	surname := paramStr[3]
+	tel := paramStr[4]
+	t := strings.ReplaceAll(tel, "-", "")
+	if !matchTel(t) {
+		fmt.Println("Not a valid telephone number:", tel)
+		return
+	}
+	temp := &Entry{Name: name, Surname: surname, Tel: t}
+	err := insert(temp)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotModified)
+		Body := "Failed to add record\n"
+		fmt.Fprintf(w, "%s", Body)
+	} else {
+		log.Println("Serving:", r.URL.Path, "from", r.Host)
+		Body := "New record added successfully\n"
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%s", Body)
+	}
+
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
+}
