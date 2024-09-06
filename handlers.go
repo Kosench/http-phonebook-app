@@ -49,3 +49,10 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	Body := list()
 	fmt.Fprintf(w, "%s", Body)
 }
+
+func statusHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
+	w.WriteHeader(http.StatusOK)
+	Body := fmt.Sprintf("Total entries: %d\n", len(data))
+	fmt.Fprintf(w, "%s", Body)
+}
