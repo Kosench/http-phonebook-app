@@ -91,3 +91,27 @@ func insertHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 }
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	// получить значение Search из URL
+	paramStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("Path:", paramStr)
+	if len(paramStr) < 3 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Not found: "+r.URL.Path)
+		return
+	}
+	var Body string
+	telephone := paramStr[2]
+
+	t := search(telephone)
+	if t == nil {
+		w.WriteHeader(http.StatusNotFound)
+		Body = "Could not be found: " + telephone + "\n"
+	} else {
+		w.WriteHeader(http.StatusOK)
+		Body = t.Name + " " + t.Surname + " " + t.Tel + "\n"
+	}
+	fmt.Println("Serving:", r.URL.Path, "from", r.Host)
+	fmt.Fprintf(w, "%s", Body)
+}
