@@ -42,3 +42,10 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s", Body)
 }
+
+func listHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
+	w.WriteHeader(http.StatusOK)
+	Body := list()
+	fmt.Fprintf(w, "%s", Body)
+}
